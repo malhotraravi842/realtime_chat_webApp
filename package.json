@@ -11,7 +11,7 @@
     "formik": "^2.2.5",
     "react": "^17.0.1",
     "react-avatar-editor": "^11.0.13",
-    "react-chat-engine": "^1.4.2",
+    "react-chat-engine": "^1.10.15",
     "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
