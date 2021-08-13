@@ -1,14 +1,34 @@
+import { fb } from 'service';
 import { useState } from 'react';
-import { useHistory } from 'react-router';
-import { Formik, Form } from 'formik';
-import { FormField } from 'components';
-import { defaultValues, validationSchema } from './';
+import { Form, Formik } from 'formik';
+import { useHistory } from 'react-router-dom';
+import { FormField } from 'components/FormField/FormField';
+import { validationSchema, defaultValues } from './formikConfig';
 
 export const Login = () => {
-  const [serverError, setServerError] = useState('');
   const history = useHistory();
+  const [serverError, setServerError] = useState('');
+
   const login = ({ email, password }, { setSubmitting }) => {
-    console.log('Logging In: ', email, password);
+    fb.auth
+      .signInWithEmailAndPassword(email, password)
+      .then(res => {
+        if (!res.user) {
+          setServerError(
+            "We're having trouble logging you in. Please try again.",
+          );
+        }
+      })
+      .catch(err => {
+        if (err.code === 'auth/wrong-password') {
+          setServerError('Invalid credentials');
+        } else if (err.code === 'auth/user-not-found') {
+          setServerError('No account for this email');
+        } else {
+          setServerError('Something went wrong :(');
+        }
+      })
+      .finally(() => setSubmitting(false));
   };
 
   return (
@@ -22,8 +42,9 @@ export const Login = () => {
       >
         {({ isValid, isSubmitting }) => (
           <Form>
-            <FormField type="email" label="Email Address" name="email" />
-            <FormField type="password" label="Password" name="password" />
+            <FormField name="email" label="Email" type="email" />
+            <FormField name="password" label="Password" type="password" />
+
             <div className="auth-link-container">
               Don't have an account?{' '}
               <span
@@ -33,12 +54,14 @@ export const Login = () => {
                 Sign Up!
               </span>
             </div>
-            <button disabled={isSubmitting || !isValid} type="submit">
-              LogIn
+
+            <button type="submit" disabled={!isValid || isSubmitting}>
+              Login
             </button>
           </Form>
         )}
       </Formik>
+
       {!!serverError && <div className="error">{serverError}</div>}
     </div>
   );

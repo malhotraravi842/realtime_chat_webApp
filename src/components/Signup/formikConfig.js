@@ -14,7 +14,7 @@ export const validationSchema = Yup.object().shape({
     .min(8, 'Must be at least 8 characters'),
   verifyPassword: Yup.string()
     .required('Required')
-    .oneOf([Yup.ref('password'), null], 'Password must match'),
+    .oneOf([Yup.ref('password'), null], 'Passwords must match'),
   userName: Yup.string()
     .required('Required')
     .matches(/^\S*$/, 'No spaces')
